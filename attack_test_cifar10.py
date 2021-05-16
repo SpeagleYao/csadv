@@ -11,6 +11,7 @@ import torch.optim as optim
 from torchvision import datasets, transforms
 from models import PreActResNet18
 from tqdm import tqdm
+import numpy as np
 
 
 parser = argparse.ArgumentParser(description='PyTorch CIFAR PGD Attack Evaluation')
@@ -29,7 +30,7 @@ parser.add_argument('--random',
                     help='random initialization for PGD')
 # TODO:
 parser.add_argument('--model-path',
-                    default='./cp_cifar10/res18_normal.pth',
+                    default='./cp_cifar10/res18_natural.pth',
                     help='model for white-box attack evaluation')
 parser.add_argument('--white-box-attack', default=True,
                     help='whether perform white-box attack')
@@ -55,6 +56,8 @@ def _pgd_whitebox(model,
                   step_size=args.step_size):
     out = model(X)
     err = (out.data.max(1)[1] != y.data).float().sum()
+    f2t_nat = np.logical_and(out.data.max(1)[1].cpu().numpy() == 3, y.data.cpu().numpy() == 5).sum()
+    t2f_nat = np.logical_and(out.data.max(1)[1].cpu().numpy() == 5, y.data.cpu().numpy() == 3).sum()
     X_pgd = Variable(X.data, requires_grad=True)
     if args.random:
         random_noise = torch.FloatTensor(*X_pgd.shape).uniform_(-epsilon, epsilon).to(device)
@@ -72,9 +75,12 @@ def _pgd_whitebox(model,
         eta = torch.clamp(X_pgd.data - X.data, -epsilon, epsilon)
         X_pgd = Variable(X.data + eta, requires_grad=True)
         X_pgd = Variable(torch.clamp(X_pgd, 0, 1.0), requires_grad=True)
-    err_pgd = (model(X_pgd).data.max(1)[1] != y.data).float().sum()
+    out_pgd = model(X_pgd)
+    err_pgd = (out_pgd.data.max(1)[1] != y.data).float().sum()
+    f2t_pgd = np.logical_and(out_pgd.data.cpu().numpy().max(1)[1] == 3, y.data.cpu().numpy() == 5).sum()
+    t2f_pgd = np.logical_and(out_pgd.data.cpu().numpy().max(1)[1] == 5, y.data.cpu().numpy() == 3).sum()
     # print('err pgd (white-box): ', err_pgd)
-    return err, err_pgd
+    return err, err_pgd, f2t_nat, t2f_nat, f2t_pgd, t2f_pgd
 
 
 def eval_adv_test_whitebox(model, device, test_loader):
@@ -84,16 +90,28 @@ def eval_adv_test_whitebox(model, device, test_loader):
     model.eval()
     robust_err_total = 0
     natural_err_total = 0
+    t2f_nat_total = 0
+    f2t_nat_total = 0
+    t2f_rob_total = 0
+    f2t_rob_total = 0
 
     for data, target in tqdm(test_loader):
         data, target = data.to(device), target.to(device)
         # pgd attack
         X, y = Variable(data, requires_grad=True), Variable(target)
-        err_natural, err_robust = _pgd_whitebox(model, X, y)
+        err_natural, err_robust, f2t_nat_err, t2f_nat_err, f2t_rob_err, t2f_rob_err = _pgd_whitebox(model, X, y)
         robust_err_total += err_robust
         natural_err_total += err_natural
+        f2t_nat_total += f2t_nat_err
+        t2f_nat_total += t2f_nat_err
+        f2t_rob_total += f2t_rob_err
+        t2f_rob_total += t2f_rob_err
     print('natural_acc:\t', 100 - natural_err_total.cpu().numpy()/100, '%')
     print('robust _acc:\t', 100 - robust_err_total.cpu().numpy()/100, '%')
+    print('cat to dog nat:\t', 100 - f2t_nat_total/10, '%')
+    print('dog to cat nat:\t', 100 - t2f_nat_total/10, '%')
+    print('cat to dog rob:\t', 100 - f2t_rob_total/10, '%')
+    print('dog to cat rob:\t', 100 - t2f_rob_total/10, '%')
 
 
 def main():

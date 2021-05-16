@@ -13,7 +13,6 @@ import sys
 import time
 sys.path.append('..')
 
-from random import shuffle
 from models import PreActResNet18
 from tqdm import tqdm
 from utils_logger import Logger
@@ -57,7 +56,7 @@ torch.manual_seed(args.seed)
 device = torch.device("cuda" if use_cuda else "cpu")
 kwargs = {'num_workers': 4, 'pin_memory': True} if use_cuda else {}
 # TODO:
-log_filename = 'res18_normal.txt'
+log_filename = 'res18_natural.txt'
 sys.stdout = Logger(os.path.join(args.save_dir, log_filename))
 scaler = GradScaler()
 criterion = nn.CrossEntropyLoss()
@@ -103,17 +102,6 @@ def train(args, model, device, train_loader, optimizer, epoch):
     for batch_idx, (data, target) in enumerate(tqdm(train_loader)):
         data, target = data.to(device), target.to(device)
 
-        # Generate adversarial examples for all examples
-        model.eval()
-        adv_sample = attack(model, data, target, criterion, args.epsilon, args.num_steps, args.step_size)
-        data = torch.cat((data, adv_sample), 0)
-        target = torch.cat((target, target), 0)
-        rg = list(range(len(data)))
-        shuffle(rg)
-        data = data[rg]
-        target = target[rg]
-
-        model.train()
         optimizer.zero_grad()
 
         # calculate robust loss
@@ -199,7 +187,7 @@ def main():
     train_time = time.time()
     print('Total train time: {:.2f} minutes'.format((train_time - start_train_time)/60.0))
 # TODO:
-    model_name = 'res18_normal.pth'
+    model_name = 'res18_natural.pth'
     torch.save(model.state_dict(), os.path.join(model_dir, model_name))
 
 
