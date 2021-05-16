@@ -28,7 +28,7 @@ parser.add_argument('--random',
                     default=True,
                     help='random initialization for PGD')
 parser.add_argument('--model-path',
-                    default='./model_res18_inc_trades/res18_inc_trades_10.0.pth',
+                    default='./cp_cifar10/res18_natural.pth',
                     help='model for white-box attack evaluation')
 parser.add_argument('--white-box-attack', default=True,
                     help='whether perform white-box attack')

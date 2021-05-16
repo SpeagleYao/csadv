@@ -185,7 +185,7 @@ def main():
         eval_test(model, device, test_loader)
         print('================================================================')
     train_time = time.time()
-    print('Total train time: {:.2f} minutes' % (train_time - start_train_time)/60)
+    print('Total train time: {:.2f} minutes'.format((train_time - start_train_time)/60.0))
 # TODO:
     model_name = 'res18_natural.pth'
     torch.save(model.state_dict(), os.path.join(model_dir, model_name))
