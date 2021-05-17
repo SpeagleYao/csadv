@@ -77,7 +77,7 @@ testset = datasets.CIFAR10(root='../data', train=False, download=True, transform
 test_loader = torch.utils.data.DataLoader(testset, batch_size=args.test_batch_size, shuffle=False, **kwargs)
 
 
-def attack(model, img, label, criterion, eps=0.031, iters=10, step=0.007):
+def attack(model, img, label, criterion, eps=0.031, iters=10, step=0.007, target_setting = False):
     adv = img.detach()
     adv.requires_grad = True
 
@@ -88,7 +88,10 @@ def attack(model, img, label, criterion, eps=0.031, iters=10, step=0.007):
         loss.backward()
 
         noise = adv.grad
-        adv.data = adv.data + step * noise.sign()
+        if target_setting:
+            adv.data = adv.data - step * noise.sign()
+        else:
+            adv.data = adv.data + step * noise.sign()
 
         adv.data = torch.where(adv.data > img.data + eps, img.data + eps, adv.data)
         adv.data = torch.where(adv.data < img.data - eps, img.data - eps, adv.data)

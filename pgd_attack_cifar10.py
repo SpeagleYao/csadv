@@ -8,7 +8,7 @@ import torch.nn.functional as F
 import torchvision
 from torch.autograd import Variable
 import torch.optim as optim
-from torchvision import datasets, transforms
+from torchvision import transforms
 from models import PreActResNet18
 from tqdm import tqdm
 

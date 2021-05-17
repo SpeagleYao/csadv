@@ -1,7 +1,0 @@
-res18 natural
-natural_acc:     92.7 %
-robust _acc:     0.0 %
-res18 normal
-natural_acc:     87.07 %
-robust _acc:     48.3 %
-
