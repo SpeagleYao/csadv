@@ -11,5 +11,12 @@
 # - ship : 8
 # - truck : 9
 
-python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_natural.pth' --target1 1 --target2 9 >> result.txt
-python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_normal.pth'  --target1 1 --target2 9 >>result.txt
+for cst1 in `echo 3`
+do
+    for cst2 in `echo 5`
+    do
+        python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_natural.pth' --target1 ${cst1} --target2 ${cst2} >> test_result.txt
+        python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_normal.pth'  --target1 ${cst1} --target2 ${cst2} >> test_result.txt
+        python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_trades.pth'  --target1 ${cst1} --target2 ${cst2} >> test_result.txt
+    done
+done

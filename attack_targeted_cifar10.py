@@ -164,8 +164,6 @@ def eval_adv_test_whitebox(model, device, test_loader):
     f2t_nat_total = 0
     t2f_rob_total = 0
     f2t_rob_total = 0
-    y1 = 0
-    y2 = 0
 
     for data, target in tqdm(test_loader):
         data, target = data.to(device), target.to(device)
@@ -179,18 +177,19 @@ def eval_adv_test_whitebox(model, device, test_loader):
         t2f_nat_total += t2f_nat_err
         f2t_rob_total += f2t_rob_err
         t2f_rob_total += t2f_rob_err
-        y1 += (y == cs_target1).sum()
-        y2 += (y == cs_target2).sum()
     # print('natural_acc:\t', 100 - natural_err_total.cpu().numpy()/100, '%')
     # print('robust _acc:\t', 100 - robust_err_total.cpu().numpy()/100, '%')
     # print('=======================================================================')
     print(f'target1 is {getLabel(cs_target1)}.\ttarget2 is {getLabel(cs_target2)}.')
-    print('target1 to target2 nat:\t', 100 - f2t_nat_total/10, '%')
-    print('target2 to target1 nat:\t', 100 - t2f_nat_total/10, '%')
-    print('target1 to target2 rob:\t', 100 - f2t_rob_total/10, '%')
-    print('target2 to target1 rob:\t', 100 - t2f_rob_total/10, '%')
+    # print('target1 to target2 nat:\t', 100 - f2t_nat_total/10, '%')
+    # print('target2 to target1 nat:\t', 100 - t2f_nat_total/10, '%')
+    # print('target1 to target2 rob:\t', 100 - f2t_rob_total/10, '%')
+    # print('target2 to target1 rob:\t', 100 - t2f_rob_total/10, '%')    
+    print('target1 to target2 nat:\t', f2t_nat_total)
+    print('target2 to target1 nat:\t', t2f_nat_total)
+    print('target1 to target2 rob:\t', f2t_rob_total)
+    print('target2 to target1 rob:\t', t2f_rob_total)
     print('=======================================================================')
-    print(' ')
 
 
 def main():
