@@ -13,7 +13,9 @@ import sys
 import time
 sys.path.append('..')
 
+from random import shuffle
 from models import PreActResNet18
+from loss import trades_loss
 from tqdm import tqdm
 from utils_logger import Logger
 
@@ -38,6 +40,8 @@ parser.add_argument('--num-steps', default=10,
                     help='perturb number of steps')
 parser.add_argument('--step-size', default=0.007,
                     help='perturb step size')
+parser.add_argument('--beta', default=6.0,
+                    help='regularization, i.e., 1/lambda in TRADES')
 parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--log-interval', type=int, default=98, metavar='N',
@@ -56,7 +60,7 @@ torch.manual_seed(args.seed)
 device = torch.device("cuda" if use_cuda else "cpu")
 kwargs = {'num_workers': 4, 'pin_memory': True} if use_cuda else {}
 # TODO:
-log_filename = 'res18_natural.txt'
+log_filename = 'res18_trades.txt'
 sys.stdout = Logger(os.path.join(args.save_dir, log_filename))
 scaler = GradScaler()
 criterion = nn.CrossEntropyLoss()
@@ -81,12 +85,16 @@ def train(args, model, device, train_loader, optimizer, epoch):
     for batch_idx, (data, target) in enumerate(tqdm(train_loader)):
         data, target = data.to(device), target.to(device)
 
-        optimizer.zero_grad()
-
         # calculate robust loss
         with autocast():
-            output = model(data)
-            loss = criterion(output, target)
+            loss = trades_loss(model=model,
+                           x_natural=data,
+                           y=target,
+                           optimizer=optimizer,
+                           step_size=args.step_size,
+                           epsilon=args.epsilon,
+                           perturb_steps=args.num_steps,
+                           beta=args.beta)
         scaler.scale(loss).backward()
         scaler.step(optimizer)
         scaler.update()
@@ -166,7 +174,7 @@ def main():
     train_time = time.time()
     print('Total train time: {:.2f} minutes'.format((train_time - start_train_time)/60.0))
 # TODO:
-    model_name = 'res18_natural.pth'
+    model_name = 'res18_trades.pth'
     torch.save(model.state_dict(), os.path.join(model_dir, model_name))
 
 
