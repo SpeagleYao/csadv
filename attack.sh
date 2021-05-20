@@ -15,8 +15,10 @@ for cst1 in `echo 3`
 do
     for cst2 in `echo 5`
     do
-        python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_natural.pth' --target1 ${cst1} --target2 ${cst2} >> test_result.txt
-        python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_normal.pth'  --target1 ${cst1} --target2 ${cst2} >> test_result.txt
-        python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_trades.pth'  --target1 ${cst1} --target2 ${cst2} >> test_result.txt
+        python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_natural.pth' --target1 ${cst1} --target2 ${cst2} >> result.txt
+        python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_normal.pth'  --target1 ${cst1} --target2 ${cst2} >> result.txt
+        python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_trades.pth'  --target1 ${cst1} --target2 ${cst2} >> result.txt
+        python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_alltar.pth'  --target1 ${cst1} --target2 ${cst2} >> result.txt
+        python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_sp_35.pth'   --target1 ${cst1} --target2 ${cst2} >> result.txt
     done
 done

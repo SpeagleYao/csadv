@@ -169,18 +169,18 @@ def eval_adv_test_whitebox(model, device, test_loader):
         data, target = data.to(device), target.to(device)
         # pgd attack
         X, y = Variable(data, requires_grad=True), Variable(target)
-        # err_natural, err_robust = _pgd_whitebox_untargeted(model, X, y)
+        err_natural, err_robust = _pgd_whitebox_untargeted(model, X, y)
         f2t_nat_err, t2f_nat_err, f2t_rob_err, t2f_rob_err= _pgd_whitebox_targeted(model, X, y)
-        # robust_err_total += err_robust
-        # natural_err_total += err_natural
+        robust_err_total += err_robust
+        natural_err_total += err_natural
         f2t_nat_total += f2t_nat_err
         t2f_nat_total += t2f_nat_err
         f2t_rob_total += f2t_rob_err
         t2f_rob_total += t2f_rob_err
-    # print('natural_acc:\t', 100 - natural_err_total.cpu().numpy()/100, '%')
-    # print('robust _acc:\t', 100 - robust_err_total.cpu().numpy()/100, '%')
-    # print('=======================================================================')
-    print(f'target1 is {getLabel(cs_target1)}.\ttarget2 is {getLabel(cs_target2)}.')
+    print('natural_acc:\t', 100 - natural_err_total.cpu().numpy()/100, '%')
+    print('robust _acc:\t', 100 - robust_err_total.cpu().numpy()/100, '%')
+    print('=======================================================================')
+    print(f'target1 is {cs_target1}: {getLabel(cs_target1)}.\ttarget2 is {cs_target2}: {getLabel(cs_target2)}.')
     # print('target1 to target2 nat:\t', 100 - f2t_nat_total/10, '%')
     # print('target2 to target1 nat:\t', 100 - t2f_nat_total/10, '%')
     # print('target1 to target2 rob:\t', 100 - f2t_rob_total/10, '%')

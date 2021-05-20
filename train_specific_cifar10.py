@@ -13,7 +13,7 @@ import sys
 import time
 sys.path.append('..')
 
-from random import shuffle, randint
+from random import shuffle
 from models import PreActResNet18
 from tqdm import tqdm
 from utils_logger import Logger
@@ -57,7 +57,7 @@ torch.manual_seed(args.seed)
 device = torch.device("cuda" if use_cuda else "cpu")
 kwargs = {'num_workers': 4, 'pin_memory': True} if use_cuda else {}
 # TODO:
-log_filename = 'res18_alltar.txt'
+log_filename = 'res18_sp_35.txt'
 sys.stdout = Logger(os.path.join(args.save_dir, log_filename))
 scaler = GradScaler()
 criterion = nn.CrossEntropyLoss()
@@ -108,12 +108,17 @@ def train(args, model, device, train_loader, optimizer, epoch):
 
         # Generate adversarial examples for all examples
         model.eval()
-        
-        adv_target = torch.randint(10, (data.shape[0], )).long().cuda()
-        adv_sample = attack(model, data, adv_target, criterion, args.epsilon, args.num_steps, args.step_size, True)
-        data = torch.cat((data, adv_sample), 0)
-        target = torch.cat((target, target), 0)
-        
+
+        data_3 = torch.index_select(data, 0, (target == 3).nonzero(as_tuple=False).squeeze())
+        data_5 = torch.index_select(data, 0, (target == 5).nonzero(as_tuple=False).squeeze())
+        target_3 = torch.ones(data_3.shape[0]).long().cuda() * 5
+        target_5 = torch.ones(data_5.shape[0]).long().cuda() * 3
+
+        adv_sample_3 = attack(model, data_3, target_3, criterion, args.epsilon, args.num_steps, args.step_size, True)
+        adv_sample_5 = attack(model, data_5, target_5, criterion, args.epsilon, args.num_steps, args.step_size, True)
+        data = torch.cat((data, adv_sample_3, adv_sample_5), 0)
+        target = torch.cat((target, (target_3/5*3).long(), (target_5/3*5).long()), 0)
+
         rg = list(range(len(data)))
         shuffle(rg)
         data = data[rg]
@@ -205,7 +210,7 @@ def main():
     train_time = time.time()
     print('Total train time: {:.2f} minutes'.format((train_time - start_train_time)/60.0))
 # TODO:
-    model_name = 'res18_alltar.pth'
+    model_name = 'res18_sp_35.pth'
     torch.save(model.state_dict(), os.path.join(model_dir, model_name))
 
 
