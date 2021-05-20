@@ -14,3 +14,15 @@ Doing experiments to see how one specific attack from one kind to another is inf
 ### Expeiments
 - Do experiments between two specific classes, e.g. frog-truck.
 - Do experiments between two types of classes, e.g. animal-vehicle.
+
+### What I've done
+In the first experiments, I now have trained 5 models as follows:
+- res18_natural: Train the model with natural data
+- res18_normal : Train the model with natural data + all untargeted pgd data
+- res18_trades : Train the model with TRADES loss
+- res18_alltar : Train the model with natural data + all targeted pgd data
+- res18_sp_35  : Train the model with natural data + all targeted pgd data between class 3&5
+
+All these models are tested under natural testset, untargeted pgd testset, and targeted pgd testset between two specific classes.
+
+Results can be seen in [here](result.txt).
