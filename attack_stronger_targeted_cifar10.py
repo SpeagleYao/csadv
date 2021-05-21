@@ -11,12 +11,13 @@ import torch.optim as optim
 from torchvision import transforms
 from models import PreActResNet18
 from tqdm import tqdm
+from torch.cuda.amp import autocast
 import numpy as np
 
 
 parser = argparse.ArgumentParser(description='PyTorch CIFAR PGD Attack Evaluation')
 parser.add_argument('--test-batch-size', type=int, default=512, metavar='N',
-                    help='input batch size for testing (default: 512)')
+                    help='input batch size for testing (default: 200)')
 parser.add_argument('--no-cuda', action='store_true', default=False,
                     help='disables CUDA training')
 parser.add_argument('--epsilon', default=0.031,
@@ -52,6 +53,75 @@ test_loader = torch.utils.data.DataLoader(testset, batch_size=args.test_batch_si
 cs_target1 = args.target1
 cs_target2 = args.target2
 
+
+cifar10_mean = (0.4914, 0.4822, 0.4465)
+cifar10_std = (0.2471, 0.2435, 0.2616)
+mu = torch.tensor(cifar10_mean).view(3,1,1).cuda()
+std = torch.tensor(cifar10_std).view(3,1,1).cuda()
+upper_limit = ((1 - mu)/ std)
+lower_limit = ((0 - mu)/ std)
+
+def clamp(X, lower_limit, upper_limit):
+    return torch.max(torch.min(X, upper_limit), lower_limit)
+
+def attack_pgd(model, X, y, epsilon, alpha, attack_iters, restarts, target_setting = False):
+    max_loss = torch.zeros(y.shape[0]).cuda()
+    max_delta = torch.zeros_like(X).cuda()
+    for zz in range(restarts):
+        delta = torch.zeros_like(X).cuda()
+        for i in range(len(epsilon)):
+            delta[:, i, :, :].uniform_(-epsilon[i][0][0].item(), epsilon[i][0][0].item())
+        delta.data = clamp(delta, lower_limit - X, upper_limit - X)
+        delta.requires_grad = True
+        for _ in range(attack_iters):
+            index = torch.where(output.max(1)[1] == y)
+            if len(index[0]) == 0:
+                break
+            with autocast():
+                if target_setting:
+                    output = model(X - delta)
+                else:
+                    output = model(X + delta)
+                loss = F.cross_entropy(output, y)
+            loss.backward()
+            grad = delta.grad.detach()
+            d = delta[index[0], :, :, :]
+            g = grad[index[0], :, :, :]
+            if target_setting:
+                d = clamp(d - alpha * torch.sign(g), -epsilon, epsilon)
+            else:
+                d = clamp(d + alpha * torch.sign(g), -epsilon, epsilon)
+            d = clamp(d, lower_limit - X[index[0], :, :, :], upper_limit - X[index[0], :, :, :])
+            delta.data[index[0], :, :, :] = d
+            delta.grad.zero_()
+        if target_setting:
+            all_loss = F.cross_entropy(model(X-delta), y, reduction='none').detach()
+        else:
+            all_loss = F.cross_entropy(model(X+delta), y, reduction='none').detach()
+        max_delta[all_loss >= max_loss] = delta.detach()[all_loss >= max_loss]
+        max_loss = torch.max(max_loss, all_loss)
+    return max_delta
+
+
+def evaluate_pgd(test_loader, model, attack_iters, restarts):
+    epsilon = (8 / 255.) / std
+    alpha = (2 / 255.) / std
+    pgd_loss = 0
+    pgd_acc = 0
+    n = 0
+    model.eval()
+    for i, (X, y) in enumerate(test_loader):
+        X, y = X.cuda(), y.cuda()
+        pgd_delta = attack_pgd(model, X, y, epsilon, alpha, attack_iters, restarts)
+        with torch.no_grad():
+            output = model(X + pgd_delta)
+            loss = F.cross_entropy(output, y)
+            pgd_loss += loss.item() * y.size(0)
+            pgd_acc += (output.max(1)[1] == y).sum().item()
+            n += y.size(0)
+    return pgd_loss/n, pgd_acc/n
+
+
 def attack(model, img, label, criterion, eps=0.031, iters=10, step=0.007, target_setting=False):
     adv = img.detach()
     adv.requires_grad = True
@@ -62,6 +132,7 @@ def attack(model, img, label, criterion, eps=0.031, iters=10, step=0.007, target
         loss.backward()
 
         noise = adv.grad
+        adv.data = adv.data + step * noise.sign()
         if target_setting:
             adv.data = adv.data - step * noise.sign()
         else:
@@ -176,18 +247,18 @@ def eval_adv_test_whitebox(model, device, test_loader):
         t2f_nat_total += t2f_nat_err
         f2t_rob_total += f2t_rob_err
         t2f_rob_total += t2f_rob_err
-    print('natural_acc:\t', round(100 - natural_err_total.cpu().numpy()/100, 2), '%')
-    print('robust _acc:\t', round(100 - robust_err_total.cpu().numpy()/100 , 2), '%')
+    print('natural_acc:\t', 100 - natural_err_total.cpu().numpy()/100, '%')
+    print('robust _acc:\t', 100 - robust_err_total.cpu().numpy()/100, '%')
     print('=======================================================================')
     print(f'target1 is {cs_target1}: {getLabel(cs_target1)}.\ttarget2 is {cs_target2}: {getLabel(cs_target2)}.')
-    print('target1 to target2 nat:\t', round(100 - f2t_nat_total/10, 2), '%')
-    print('target2 to target1 nat:\t', round(100 - t2f_nat_total/10, 2), '%')
-    print('target1 to target2 rob:\t', round(100 - f2t_rob_total/10, 2), '%')
-    print('target2 to target1 rob:\t', round(100 - t2f_rob_total/10, 2), '%')    
-    # print('target1 to target2 nat:\t', f2t_nat_total)
-    # print('target2 to target1 nat:\t', t2f_nat_total)
-    # print('target1 to target2 rob:\t', f2t_rob_total)
-    # print('target2 to target1 rob:\t', t2f_rob_total)
+    # print('target1 to target2 nat:\t', 100 - f2t_nat_total/10, '%')
+    # print('target2 to target1 nat:\t', 100 - t2f_nat_total/10, '%')
+    # print('target1 to target2 rob:\t', 100 - f2t_rob_total/10, '%')
+    # print('target2 to target1 rob:\t', 100 - t2f_rob_total/10, '%')    
+    print('target1 to target2 nat:\t', f2t_nat_total)
+    print('target2 to target1 nat:\t', t2f_nat_total)
+    print('target1 to target2 rob:\t', f2t_rob_total)
+    print('target2 to target1 rob:\t', t2f_rob_total)
     print('=======================================================================')
 
 

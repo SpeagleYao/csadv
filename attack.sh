@@ -11,14 +11,15 @@
 # - ship : 8
 # - truck : 9
 
-for cst1 in `echo 3`
+for cst1 in `echo 1`
 do
-    for cst2 in `echo 8`
+    for cst2 in `echo 9`
     do
-        python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_natural.pth' --target1 ${cst1} --target2 ${cst2} >> tresult.txt
-        python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_normal.pth'  --target1 ${cst1} --target2 ${cst2} >> tresult.txt
-        python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_trades.pth'  --target1 ${cst1} --target2 ${cst2} >> tresult.txt
-        python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_alltar.pth'  --target1 ${cst1} --target2 ${cst2} >> tresult.txt
-        # python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_sp_35.pth'   --target1 ${cst1} --target2 ${cst2} >> tresult.txt
+        python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_natural.pth' --target1 ${cst1} --target2 ${cst2} >> test_result.txt
+        python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_normal.pth'  --target1 ${cst1} --target2 ${cst2} >> test_result.txt
+        python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_trades.pth'  --target1 ${cst1} --target2 ${cst2} >> test_result.txt
+        python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_alltar.pth'  --target1 ${cst1} --target2 ${cst2} >> test_result.txt
+        # python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_sp_35.pth'   --target1 ${cst1} --target2 ${cst2} >> test_result.txt
+        # python attack_targeted_cifar10.py --model-path './cp_cifar10/res18_sp_53.pth'   --target1 ${cst1} --target2 ${cst2} >> test_result.txt
     done
 done

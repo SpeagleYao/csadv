@@ -116,9 +116,9 @@ def train(args, model, device, train_loader, optimizer, epoch):
         target_1 = torch.ones(data_1.shape[0]).long().cuda() * cs_target2
         target_2 = torch.ones(data_2.shape[0]).long().cuda() * cs_target1
 
-        adv_sample_3 = attack(model, data_1, target_1, criterion, args.epsilon, args.num_steps, args.step_size, True)
-        adv_sample_5 = attack(model, data_2, target_2, criterion, args.epsilon, args.num_steps, args.step_size, True)
-        data = torch.cat((data, adv_sample_3, adv_sample_5), 0)
+        adv_sample_1 = attack(model, data_1, target_1, criterion, args.epsilon, args.num_steps, args.step_size, True)
+        adv_sample_2 = attack(model, data_2, target_2, criterion, args.epsilon, args.num_steps, args.step_size, True)
+        data = torch.cat((data, adv_sample_1, adv_sample_2), 0)
         target = torch.cat((target, (target_1/cs_target2*cs_target1).int().long(), (target_2/cs_target1*cs_target2).int().long()), 0)
 
         rg = list(range(len(data)))
