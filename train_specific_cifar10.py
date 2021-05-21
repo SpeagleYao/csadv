@@ -49,6 +49,8 @@ parser.add_argument('--model-dir', default='cp_cifar10',
 args = parser.parse_args()
 
 # settings
+cs_target1 = 5
+cs_target2 = 3
 model_dir = args.model_dir
 if not os.path.exists(model_dir):
     os.makedirs(model_dir)
@@ -57,7 +59,7 @@ torch.manual_seed(args.seed)
 device = torch.device("cuda" if use_cuda else "cpu")
 kwargs = {'num_workers': 4, 'pin_memory': True} if use_cuda else {}
 # TODO:
-log_filename = 'res18_sp_35.txt'
+log_filename = 'res18_sp_53.txt'
 sys.stdout = Logger(os.path.join(args.save_dir, log_filename))
 scaler = GradScaler()
 criterion = nn.CrossEntropyLoss()
@@ -109,15 +111,15 @@ def train(args, model, device, train_loader, optimizer, epoch):
         # Generate adversarial examples for all examples
         model.eval()
 
-        data_3 = torch.index_select(data, 0, (target == 3).nonzero(as_tuple=False).squeeze())
-        data_5 = torch.index_select(data, 0, (target == 5).nonzero(as_tuple=False).squeeze())
-        target_3 = torch.ones(data_3.shape[0]).long().cuda() * 5
-        target_5 = torch.ones(data_5.shape[0]).long().cuda() * 3
+        data_1 = torch.index_select(data, 0, (target == cs_target1).nonzero(as_tuple=False).squeeze())
+        data_2 = torch.index_select(data, 0, (target == cs_target2).nonzero(as_tuple=False).squeeze())
+        target_1 = torch.ones(data_1.shape[0]).long().cuda() * cs_target2
+        target_2 = torch.ones(data_2.shape[0]).long().cuda() * cs_target1
 
-        adv_sample_3 = attack(model, data_3, target_3, criterion, args.epsilon, args.num_steps, args.step_size, True)
-        adv_sample_5 = attack(model, data_5, target_5, criterion, args.epsilon, args.num_steps, args.step_size, True)
+        adv_sample_3 = attack(model, data_1, target_1, criterion, args.epsilon, args.num_steps, args.step_size, True)
+        adv_sample_5 = attack(model, data_2, target_2, criterion, args.epsilon, args.num_steps, args.step_size, True)
         data = torch.cat((data, adv_sample_3, adv_sample_5), 0)
-        target = torch.cat((target, (target_3/5*3).long(), (target_5/3*5).long()), 0)
+        target = torch.cat((target, (target_1/cs_target2*cs_target1).int().long(), (target_2/cs_target1*cs_target2).int().long()), 0)
 
         rg = list(range(len(data)))
         shuffle(rg)
@@ -210,7 +212,7 @@ def main():
     train_time = time.time()
     print('Total train time: {:.2f} minutes'.format((train_time - start_train_time)/60.0))
 # TODO:
-    model_name = 'res18_sp_35.pth'
+    model_name = 'res18_sp_53.pth'
     torch.save(model.state_dict(), os.path.join(model_dir, model_name))
 
 
