@@ -1,7 +1,4 @@
 ./cp_cifar10/res18_natural.pth
-natural_acc:	 92.7 %
-robust _acc:	 0.0 %
-=======================================================================
 target1 is 1: automobile.	target2 is 9: truck.
 target1 to target2 nat:	 98.3 %
 target2 to target1 nat:	 96.9 %
@@ -9,9 +6,6 @@ target1 to target2 rob:	 0.0 %
 target2 to target1 rob:	 0.0 %
 =======================================================================
 ./cp_cifar10/res18_normal.pth
-natural_acc:	 87.07 %
-robust _acc:	 46.79 %
-=======================================================================
 target1 is 1: automobile.	target2 is 9: truck.
 target1 to target2 nat:	 96.6 %
 target2 to target1 nat:	 97.5 %
@@ -19,3 +13,72 @@ target1 to target2 rob:	 79.3 %
 target2 to target1 rob:	 71.8 %
 =======================================================================
 ./cp_cifar10/res18_trades.pth
+target1 is 1: automobile.	target2 is 9: truck.
+target1 to target2 nat:	 96.0 %
+target2 to target1 nat:	 95.6 %
+target1 to target2 rob:	 80.6 %
+target2 to target1 rob:	 80.6 %
+=======================================================================
+./cp_cifar10/res18_alltar.pth
+target1 is 1: automobile.	target2 is 9: truck.
+target1 to target2 nat:	 97.0 %
+target2 to target1 nat:	 97.5 %
+target1 to target2 rob:	 65.5 %
+target2 to target1 rob:	 60.6 %
+=======================================================================
+./cp_cifar10/res18_natural.pth
+target1 is 0: airplane.	target2 is 2: bird.
+target1 to target2 nat:	 97.1 %
+target2 to target1 nat:	 98.4 %
+target1 to target2 rob:	 0.0 %
+target2 to target1 rob:	 0.0 %
+=======================================================================
+./cp_cifar10/res18_normal.pth
+target1 is 0: airplane.	target2 is 2: bird.
+target1 to target2 nat:	 96.4 %
+target2 to target1 nat:	 98.1 %
+target1 to target2 rob:	 82.3 %
+target2 to target1 rob:	 80.2 %
+=======================================================================
+./cp_cifar10/res18_trades.pth
+target1 is 0: airplane.	target2 is 2: bird.
+target1 to target2 nat:	 94.7 %
+target2 to target1 nat:	 98.0 %
+target1 to target2 rob:	 86.3 %
+target2 to target1 rob:	 86.6 %
+=======================================================================
+./cp_cifar10/res18_alltar.pth
+target1 is 0: airplane.	target2 is 2: bird.
+target1 to target2 nat:	 96.6 %
+target2 to target1 nat:	 97.6 %
+target1 to target2 rob:	 78.0 %
+target2 to target1 rob:	 74.4 %
+=======================================================================
+./cp_cifar10/res18_natural.pth
+target1 is 3: cat.	target2 is 8: ship.
+target1 to target2 nat:	 99.8 %
+target2 to target1 nat:	 99.3 %
+target1 to target2 rob:	 0.0 %
+target2 to target1 rob:	 0.0 %
+=======================================================================
+./cp_cifar10/res18_normal.pth
+target1 is 3: cat.	target2 is 8: ship.
+target1 to target2 nat:	 99.4 %
+target2 to target1 nat:	 99.4 %
+target1 to target2 rob:	 86.2 %
+target2 to target1 rob:	 91.3 %
+=======================================================================
+./cp_cifar10/res18_trades.pth
+target1 is 3: cat.	target2 is 8: ship.
+target1 to target2 nat:	 99.0 %
+target2 to target1 nat:	 99.2 %
+target1 to target2 rob:	 94.2 %
+target2 to target1 rob:	 91.8 %
+=======================================================================
+./cp_cifar10/res18_alltar.pth
+target1 is 3: cat.	target2 is 8: ship.
+target1 to target2 nat:	 99.4 %
+target2 to target1 nat:	 99.6 %
+target1 to target2 rob:	 85.2 %
+target2 to target1 rob:	 86.1 %
+=======================================================================
