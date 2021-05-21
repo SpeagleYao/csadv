@@ -25,4 +25,4 @@ In the first experiments, I now have trained 5 models as follows:
 
 All these models are tested under natural testset, untargeted pgd testset, and targeted pgd testset between two specific classes.
 
-Results can be seen in [here](result.txt).
+<!-- Results can be seen in [here](result.txt). -->

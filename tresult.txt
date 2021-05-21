@@ -58,3 +58,23 @@ target2 to target1 nat:	 92.6 %
 target1 to target2 rob:	 52.2 %
 target2 to target1 rob:	 0.0 %
 =======================================================================
+./cp_cifar10/res18_ow_35.pth
+natural_acc:	 92.38 %
+robust _acc:	 0.04 %
+=======================================================================
+target1 is 3: cat.	target2 is 5: dog.
+target1 to target2 nat:	 92.8 %
+target2 to target1 nat:	 92.3 %
+target1 to target2 rob:	 4.4 %
+target2 to target1 rob:	 0.0 %
+=======================================================================
+./cp_cifar10/res18_ow_53.pth
+natural_acc:	 92.77 %
+robust _acc:	 0.0 %
+=======================================================================
+target1 is 3: cat.	target2 is 5: dog.
+target1 to target2 nat:	 93.4 %
+target2 to target1 nat:	 93.9 %
+target1 to target2 rob:	 0.0 %
+target2 to target1 rob:	 0.4 %
+=======================================================================
