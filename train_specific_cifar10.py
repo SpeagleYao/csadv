@@ -49,8 +49,8 @@ parser.add_argument('--model-dir', default='cp_cifar10',
 args = parser.parse_args()
 
 # settings
-cs_target1 = 5
-cs_target2 = 3
+cs_target1 = 0
+cs_target2 = 2
 model_dir = args.model_dir
 if not os.path.exists(model_dir):
     os.makedirs(model_dir)
@@ -59,7 +59,7 @@ torch.manual_seed(args.seed)
 device = torch.device("cuda" if use_cuda else "cpu")
 kwargs = {'num_workers': 4, 'pin_memory': True} if use_cuda else {}
 # TODO:
-log_filename = 'res18_sp_53.txt'
+log_filename = 'res18_sp_02.txt'
 sys.stdout = Logger(os.path.join(args.save_dir, log_filename))
 scaler = GradScaler()
 criterion = nn.CrossEntropyLoss()
@@ -212,7 +212,7 @@ def main():
     train_time = time.time()
     print('Total train time: {:.2f} minutes'.format((train_time - start_train_time)/60.0))
 # TODO:
-    model_name = 'res18_sp_53.pth'
+    model_name = 'res18_sp_02.pth'
     torch.save(model.state_dict(), os.path.join(model_dir, model_name))
 
 

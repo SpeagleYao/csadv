@@ -1,6 +1,6 @@
 from __future__ import print_function
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 import argparse
 import torch
 import torch.nn as nn
@@ -49,8 +49,8 @@ parser.add_argument('--model-dir', default='cp_cifar10',
 args = parser.parse_args()
 
 # settings
-cs_target1 = 3
-cs_target2 = 5
+cs_target1 = 2
+cs_target2 = 0
 model_dir = args.model_dir
 if not os.path.exists(model_dir):
     os.makedirs(model_dir)
@@ -59,7 +59,7 @@ torch.manual_seed(args.seed)
 device = torch.device("cuda" if use_cuda else "cpu")
 kwargs = {'num_workers': 4, 'pin_memory': True} if use_cuda else {}
 # TODO:
-log_filename = 'res18_ow_35.txt'
+log_filename = 'res18_ow_20.txt'
 sys.stdout = Logger(os.path.join(args.save_dir, log_filename))
 scaler = GradScaler()
 criterion = nn.CrossEntropyLoss()
@@ -212,7 +212,7 @@ def main():
     train_time = time.time()
     print('Total train time: {:.2f} minutes'.format((train_time - start_train_time)/60.0))
 # TODO:
-    model_name = 'res18_ow_35.pth'
+    model_name = 'res18_ow_20.pth'
     torch.save(model.state_dict(), os.path.join(model_dir, model_name))
 
 
