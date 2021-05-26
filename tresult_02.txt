@@ -1,0 +1,70 @@
+./cp_cifar10/res18_natural.pth
+natural_acc:	 92.7 %
+robust _acc:	 0.0 %
+=======================================================================
+target1 is 0: airplane.	target2 is 2: bird.
+target1 to target2 nat att suc:	 2.9 %
+target2 to target1 nat att suc:	 1.6 %
+target1 to target2 rob att suc:	 100.0 %
+target2 to target1 rob att suc:	 100.0 %
+=======================================================================
+./cp_cifar10/res18_normal.pth
+natural_acc:	 87.07 %
+robust _acc:	 46.95 %
+=======================================================================
+target1 is 0: airplane.	target2 is 2: bird.
+target1 to target2 nat att suc:	 3.6 %
+target2 to target1 nat att suc:	 1.9 %
+target1 to target2 rob att suc:	 17.2 %
+target2 to target1 rob att suc:	 19.8 %
+=======================================================================
+./cp_cifar10/res18_trades.pth
+natural_acc:	 79.71 %
+robust _acc:	 50.83 %
+=======================================================================
+target1 is 0: airplane.	target2 is 2: bird.
+target1 to target2 nat att suc:	 5.3 %
+target2 to target1 nat att suc:	 2.0 %
+target1 to target2 rob att suc:	 13.8 %
+target2 to target1 rob att suc:	 13.5 %
+=======================================================================
+./cp_cifar10/res18_alltar.pth
+natural_acc:	 87.7 %
+robust _acc:	 35.31 %
+=======================================================================
+target1 is 0: airplane.	target2 is 2: bird.
+target1 to target2 nat att suc:	 3.4 %
+target2 to target1 nat att suc:	 2.4 %
+target1 to target2 rob att suc:	 22.4 %
+target2 to target1 rob att suc:	 26.0 %
+=======================================================================
+./cp_cifar10/res18_sp_02.pth
+natural_acc:	 92.7 %
+robust _acc:	 1.8 %
+=======================================================================
+target1 is 0: airplane.	target2 is 2: bird.
+target1 to target2 nat att suc:	 2.3 %
+target2 to target1 nat att suc:	 1.6 %
+target1 to target2 rob att suc:	 15.9 %
+target2 to target1 rob att suc:	 100.0 %
+=======================================================================
+./cp_cifar10/res18_ow_02.pth
+natural_acc:	 92.42 %
+robust _acc:	 0.13 %
+=======================================================================
+target1 is 0: airplane.	target2 is 2: bird.
+target1 to target2 nat att suc:	 3.0 %
+target2 to target1 nat att suc:	 1.6 %
+target1 to target2 rob att suc:	 83.0 %
+target2 to target1 rob att suc:	 100.0 %
+=======================================================================
+./cp_cifar10/res18_ow_20.pth
+natural_acc:	 92.73 %
+robust _acc:	 0.0 %
+=======================================================================
+target1 is 0: airplane.	target2 is 2: bird.
+target1 to target2 nat att suc:	 3.2 %
+target2 to target1 nat att suc:	 1.8 %
+target1 to target2 rob att suc:	 100.0 %
+target2 to target1 rob att suc:	 100.0 %
+=======================================================================
