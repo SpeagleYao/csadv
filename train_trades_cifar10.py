@@ -14,7 +14,7 @@ import time
 sys.path.append('..')
 
 from random import shuffle
-from models import PreActResNet18
+from models import WRN_28_10
 from loss import trades_loss
 from tqdm import tqdm
 from utils_logger import Logger
@@ -60,7 +60,7 @@ torch.manual_seed(args.seed)
 device = torch.device("cuda" if use_cuda else "cpu")
 kwargs = {'num_workers': 4, 'pin_memory': True} if use_cuda else {}
 # TODO:
-log_filename = 'res18_trades.txt'
+log_filename = 'wrn28_10_trades.txt'
 sys.stdout = Logger(os.path.join(args.save_dir, log_filename))
 scaler = GradScaler()
 criterion = nn.CrossEntropyLoss()
@@ -157,7 +157,7 @@ def adjust_learning_rate(optimizer, epoch):
 def main():
     print("Let's use", torch.cuda.device_count(), "GPUs!")
     # init model, ResNet18() can be also used here for training
-    model = PreActResNet18().to(device)
+    model = WRN_28_10().to(device)
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
     start_train_time = time.time()
     for epoch in range(1, args.epochs + 1):
@@ -174,7 +174,7 @@ def main():
     train_time = time.time()
     print('Total train time: {:.2f} minutes'.format((train_time - start_train_time)/60.0))
 # TODO:
-    model_name = 'res18_trades.pth'
+    model_name = 'wrn28_10_trades.pth'
     torch.save(model.state_dict(), os.path.join(model_dir, model_name))
 
 
