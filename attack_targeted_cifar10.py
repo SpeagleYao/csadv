@@ -1,4 +1,5 @@
 from __future__ import print_function
+from models.wide_resnet import WRN_28_10
 import os
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 import argparse
@@ -15,7 +16,7 @@ import numpy as np
 
 
 parser = argparse.ArgumentParser(description='PyTorch CIFAR PGD Attack Evaluation')
-parser.add_argument('--test-batch-size', type=int, default=512, metavar='N',
+parser.add_argument('--test-batch-size', type=int, default=128, metavar='N',
                     help='input batch size for testing (default: 512)')
 parser.add_argument('--no-cuda', action='store_true', default=False,
                     help='disables CUDA training')
@@ -195,7 +196,8 @@ def main():
 
     # print('pgd white-box attack')
     print(args.model_path)
-    model = PreActResNet18().to(device)
+    model = WRN_28_10().to(device)
+    # model = PreActResNet18().to(device)
     model.load_state_dict(torch.load(args.model_path))
 
     eval_adv_test_whitebox(model, device, test_loader)

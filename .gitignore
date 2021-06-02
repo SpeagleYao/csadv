@@ -3,8 +3,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
-log_cifar10/
-cp_cifar10/
+log_wrn28/
+cp_wrn28/
 
 # C extensions
 *.so

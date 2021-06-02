@@ -1,0 +1,21 @@
+./cp_wrn28/wrn28_10_natural.pth
+natural_acc:     94.18 %
+robust _acc:     0.0 %
+=======================================================================
+target1 is 3: cat.      target2 is 5: dog.
+target1 to target2 nat att suc:  8.3 %
+target2 to target1 nat att suc:  4.1 %
+target1 to target2 rob att suc:  100.0 %
+target2 to target1 rob att suc:  100.0 %
+=======================================================================
+
+./cp_wrn28/wrn28_10_trades.pth
+natural_acc:     83.14 %
+robust _acc:     55.32 %
+=======================================================================
+target1 is 3: cat.      target2 is 5: dog.
+target1 to target2 nat att suc:  12.0 %
+target2 to target1 nat att suc:  9.9 %
+target1 to target2 rob att suc:  44.8 %
+target2 to target1 rob att suc:  38.2 %
+=======================================================================
